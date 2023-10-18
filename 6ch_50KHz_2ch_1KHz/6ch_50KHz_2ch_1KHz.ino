@@ -5,9 +5,36 @@ const int8_t SYNC_BYTE = 0xAA;
 uint16_t raw1, raw2, raw3, raw4, raw5, raw6, raw7, raw8, raw9, raw10, diff;
 unsigned long lastMicros_1, lastMicros_2, timer1, timer2;
 
+#define reset 2
+unsigned long startTime = 0;  // Variable to store the start time
+boolean pinWasHigh = false;   // Flag to track if the pin was high
+
+int pinState;
+
 int c = 0;
 
 ADC *adc = new ADC();  // adc object;
+
+void check_for_reset() {
+  pinState = digitalRead(reset);
+
+  // If the pin is high, record the start time
+  if (pinState == HIGH) {
+    if (!pinWasHigh) {
+      startTime = millis();
+      pinWasHigh = true;
+    }
+  } else {
+    pinWasHigh = false;
+  }
+
+  if (pinState == HIGH) {
+    // Check if the pin has been high for 1 second
+    if (millis() - startTime >= 1000) {
+      SCB_AIRCR = 0x05FA0004;  // Magic value to initiate a software reset
+    }
+  }
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -28,10 +55,13 @@ void setup() {
 
   adc->adc0->enableCompare(1.0 / 3.3 * adc->adc0->getMaxValue(), 0);                                                // measurement will be ready if value < 1.0V
   adc->adc0->enableCompareRange(1.0 * adc->adc0->getMaxValue() / 3.3, 2.0 * adc->adc0->getMaxValue() / 3.3, 0, 1);  // ready if value lies out of [1.0,2.0] V
-lastMicros_1 = 0;
-lastMicros_2 = 0;
-timer1 = 0;
-timer2 = 0;
+  lastMicros_1 = 0;
+  lastMicros_2 = 0;
+  timer1 = 0;
+  timer2 = 0;
+
+  pinMode(reset, INPUT);
+  digitalWrite(reset, LOW);
   delay(5000);
   timer1 = micros();
 }
@@ -44,7 +74,7 @@ void loop() {
     lastMicros_1 = micros();
 
     raw1 = adc->adc0->analogRead(A1);
-    raw2 = adc->adc1->analogRead(A2);
+    raw2 = adc->adc0->analogRead(A2);
     raw3 = adc->adc0->analogRead(A3);
     raw4 = adc->adc0->analogRead(A4);
     raw5 = adc->adc0->analogRead(A5);
@@ -72,14 +102,16 @@ void loop() {
     // Serial1.println(raw7);
     // Serial1.println(raw8);
   }
-  if(c>=10000)
-  {
-    timer2 = micros();
-    diff = timer2 - timer1;
-    Serial1.println(diff);
-    // Serial1.write(SYNC_BYTE);
-    // Serial1.write((uint8_t *)&(diff), sizeof(diff));
-    // Serial1.write((uint8_t *)&(diff), sizeof(diff));
-    while(1);
-  }
+
+  check_for_reset();
+  // if(c>=10000)
+  // {
+  //   timer2 = micros();
+  //   diff = timer2 - timer1;
+  //   Serial1.println(diff);
+  //   // Serial1.write(SYNC_BYTE);
+  //   // Serial1.write((uint8_t *)&(diff), sizeof(diff));
+  //   // Serial1.write((uint8_t *)&(diff), sizeof(diff));
+  //   while(1);
+  // }
 }
