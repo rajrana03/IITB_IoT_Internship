@@ -45,7 +45,7 @@
 #include <SPI.h>
 
 #define IIS3DWB_SPI_MODE SPI_MODE0
-#define IIS3DWB_SPI_CLOCK 10000000
+#define IIS3DWB_SPI_CLOCK 4000000 // Change here to change SPI speed of IIS3DWB
 
 IIS3DWB::IIS3DWB(uint8_t cspin)
   : _cs(cspin)

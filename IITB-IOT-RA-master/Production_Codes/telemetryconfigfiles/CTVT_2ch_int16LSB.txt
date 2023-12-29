@@ -18,12 +18,12 @@ GUI Settings:
 	smooth scrolling = true
 	show fps and period = false
 	benchmarking = false
-	antialiasing level = 8
+	antialiasing level = 16
 
 1 Connections:
 
 	connection type = UART
-	port = COM9
+	port = COM3
 	baud rate = 1500000
 	packet type = Binary
 	sample rate hz = 10000
@@ -36,11 +36,11 @@ GUI Settings:
 	transmit saved count = 0
 	sync word = 0xAA
 	sync word byte count = 1
-	datasets count = 6
+	datasets count = 2
 
 		dataset location = 1
 		binary processor = int16 LSB First
-		name = s
+		name = c
 		color = 0xFF0000
 		unit = 
 		conversion factor a = 1.0
@@ -48,40 +48,8 @@ GUI Settings:
 
 		dataset location = 3
 		binary processor = int16 LSB First
-		name = t
-		color = 0x0000FF
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 5
-		binary processor = int16 LSB First
 		name = v
-		color = 0x00FF00
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 7
-		binary processor = int16 LSB First
-		name = w
-		color = 0xFF00FF
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 9
-		binary processor = int16 LSB First
-		name = e
-		color = 0x00FFFF
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 11
-		binary processor = int16 LSB First
-		name = r
-		color = 0xFFFF00
+		color = 0x0000FF
 		unit = 
 		conversion factor a = 1.0
 		conversion factor b = 1.0
@@ -94,14 +62,14 @@ GUI Settings:
 	chart type = Time Domain
 	top left x = 0
 	top left y = 0
-	bottom right x = 4
+	bottom right x = 5
 	bottom right y = 5
-	datasets = connection 0 location 1,connection 0 location 3,connection 0 location 5,connection 0 location 7,connection 0 location 9,connection 0 location 11
+	datasets = connection 0 location 3,connection 0 location 1
 	bitfield edge states = 
 	bitfield level states = 
-	duration = 10.0
-	duration unit = Seconds
-	time axis shows = Time Elapsed
+	duration = 100000
+	duration unit = Samples
+	time axis shows = Sample Count
 	autoscale y-axis minimum = true
 	manual y-axis minimum = -1.0
 	autoscale y-axis maximum = true

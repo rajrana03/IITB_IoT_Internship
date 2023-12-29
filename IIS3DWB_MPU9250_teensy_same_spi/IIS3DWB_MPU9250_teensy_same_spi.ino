@@ -29,9 +29,10 @@ int16_t Gz{ 0 };
 */
 bool Send_Garabage_Flag = false;
 int16_t Garbage_value = -5000;
+unsigned long lastMicros_1, lastMicros_2, timer1, timer2;
 
-// uint8_t Ascale = AFS_4G;
-uint8_t Ascale = AFS_2G;
+uint8_t Ascale = AFS_8G;
+// uint8_t Ascale = AFS_2G;
 float aRes;                                 // scale resolutions per LSB for the accel
 float accelBias[3] = { 0.0f, 0.0f, 0.0f };  // offset biases for the accel
 int16_t IIS3DWBData[3] = { 0 };             // Stores the 16-bit signed sensor output
@@ -39,7 +40,7 @@ int16_t ax, ay, az;                         // variables to hold latest accel da
 uint8_t IIS3DWBstatus;
 const float acc_mult_factor = 1000.0;  //convert to mili g
 
-long timer1, timer2, diff;
+// long timer1, timer2, diff;
 volatile bool IIS3DWB_DataReady = false, IIS3DWB_Wakeup = false;
 int count = 10;
 
@@ -115,6 +116,10 @@ void setup() {
 
   // c = 0x11;
   delay(2000);
+  lastMicros_1 = 0;
+  lastMicros_2 = 0;
+  timer1 = 0;
+  timer2 = 0;
 
   myMPU9250.autoOffsets();
   myMPU9250.disableGyrDLPF(MPU9250_BW_WO_DLPF_8800);  // bandwdith without DLPF
@@ -153,67 +158,77 @@ void loop() {
     //   lastMicros = micros();
     //   //
     // }
+    if (micros() >= lastMicros_1 + 40)  // micros() >= lastMicros + DESIRED_LOOP_DELAY_uSec
+    {
+      lastMicros_1 = micros();
 
-    if (!Send_Garabage_Flag) {
-      // for (;;) {
-      IIS3DWBstatus = IIS3DWB.DRstatus();  // read data ready status
-      if (IIS3DWBstatus & 0x01) {          // if new accel data is available, read it
+      if (!Send_Garabage_Flag) {
+        // for (;;) {
+        IIS3DWBstatus = IIS3DWB.DRstatus();  // read data ready status
+        if (IIS3DWBstatus & 0x01) {          // if new accel data is available, read it
 
-        IIS3DWB.readAccelData(IIS3DWBData);
+          IIS3DWB.readAccelData(IIS3DWBData);
 
-        // Now we'll calculate the accleration value into actual g's
-        ax = acc_mult_factor * ((float)IIS3DWBData[0] * aRes - accelBias[0]);  // get actual g value in mg, this depends on scale being set
-        ay = acc_mult_factor * ((float)IIS3DWBData[1] * aRes - accelBias[1]);
-        az = acc_mult_factor * ((float)IIS3DWBData[2] * aRes - accelBias[2]);
+          // Now we'll calculate the accleration value into actual g's
+          ax = acc_mult_factor * ((float)IIS3DWBData[0] * aRes - accelBias[0]);  // get actual g value in mg, this depends on scale being set
+          ay = acc_mult_factor * ((float)IIS3DWBData[1] * aRes - accelBias[1]);
+          az = acc_mult_factor * ((float)IIS3DWBData[2] * aRes - accelBias[2]);
+          // Serial.write(0xAA);  // Send the start/sync byte
+          // Serial.write((uint8_t*)&(ax), sizeof(ax));
+          // Serial.write((uint8_t*)&(ay), sizeof(ay));
+          // Serial.write((uint8_t*)&(az), sizeof(az));
+          // delayMicroseconds(25);
+        } else if (IIS3DWB.getChipID() != 0x7B) {
+          Send_Garabage_Flag = true;
+          // break;
+        }
+        // }
+        // } else {
+        // for (;;) {
+        // // timer1 = micros();
         // Serial.write(0xAA);  // Send the start/sync byte
-        // Serial.write((uint8_t*)&(ax), sizeof(ax));
-        // Serial.write((uint8_t*)&(ay), sizeof(ay));
-        // Serial.write((uint8_t*)&(az), sizeof(az));
-        delayMicroseconds(25);
-      } else if (IIS3DWB.getChipID() != 0x7B) {
-        Send_Garabage_Flag = true;
-        break;
+        // Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
+        // Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
+        // Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
+        // delayMicroseconds(1);
+        // uint8_t c = IIS3DWB.getChipID();
+        // if (c == 0x7B) {
+        //   IIS3DWB_SETUP();
+        //   Send_Garabage_Flag = false;
+        //   break;
+        // }
+        // timer2 = micros();
+        // diff = timer2 - timer1;
+        // Serial.println(diff);
+        // delay(1000);
+        // }
       }
-      // }
-    } else {
-      // for (;;) {
-      // // timer1 = micros();
-      // Serial.write(0xAA);  // Send the start/sync byte
-      // Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-      // Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-      // Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-      delayMicroseconds(1);
-      uint8_t c = IIS3DWB.getChipID();
-      if (c == 0x7B) {
-        IIS3DWB_SETUP();
-        Send_Garabage_Flag = false;
-        break;
-      }
-      // timer2 = micros();
-      // diff = timer2 - timer1;
-      // Serial.println(diff);
-      // delay(1000);
-      // }
-    }
 
-    gyr = myMPU9250.getGyrValues();
-    Gx = gyr.x * 100;
-    Gy = gyr.y * 100;
-    Gz = gyr.z * 100;
-    if (!Send_Garabage_Flag){
+      gyr = myMPU9250.getGyrValues();
+      Gx = gyr.x * 100;
+      Gy = gyr.y * 100;
+      Gz = gyr.z * 100;
+      if (!Send_Garabage_Flag) {
         Serial.write(0xAA);  // Send the start/sync byte
         Serial.write((uint8_t*)&(ax), sizeof(ax));
         Serial.write((uint8_t*)&(ay), sizeof(ay));
         Serial.write((uint8_t*)&(az), sizeof(az));
+
+      } else {
+        Serial.write(0xAA);  // Send the start/sync byte
+        Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
+        Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
+        Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
+        uint8_t c = IIS3DWB.getChipID();
+        if (c == 0x7B) {
+          IIS3DWB_SETUP();
+          Send_Garabage_Flag = false;
+          // break;
+        }
+      }
+      Serial.write((uint8_t*)&(Gx), sizeof(Gx));
+      Serial.write((uint8_t*)&(Gy), sizeof(Gy));
+      Serial.write((uint8_t*)&(Gz), sizeof(Gz));
     }
-    else{
-      Serial.write(0xAA);  // Send the start/sync byte
-      Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-      Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-      Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-    }
-    Serial.write((uint8_t*)&(Gx), sizeof(Gx));
-    Serial.write((uint8_t*)&(Gy), sizeof(Gy));
-    Serial.write((uint8_t*)&(Gz), sizeof(Gz));
   }
 }

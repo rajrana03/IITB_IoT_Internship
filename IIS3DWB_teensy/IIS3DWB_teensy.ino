@@ -3,8 +3,8 @@
 #include <Arduino.h>
 
 #define SerialDebug true  // set to true to get Serial output for debugging
-#define myLed 13
-#define CSPIN 38
+#define myLed 2
+#define CSPIN 36
 
 String control_val = "";
 
@@ -67,10 +67,10 @@ void setup() {
   Serial.begin(1500000);
   // Serial.begin(115200);
   //  delay(4000);
-  SPI1.setMOSI(26);
-  SPI1.setMISO(39);
-  SPI1.setSCK(27);
-  SPI1.begin();  // Start SPI 1 instance of teensy, for SPI default use SPI.begin()
+  // SPI1.setMOSI(26);
+  // SPI1.setMISO(39);
+  // SPI1.setSCK(27);
+  SPI.begin();  // Start SPI 1 instance of teensy, for SPI default use SPI.begin()
 
   // Configure led
   pinMode(myLed, OUTPUT);

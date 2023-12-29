@@ -23,7 +23,7 @@ GUI Settings:
 1 Connections:
 
 	connection type = UART
-	port = COM14
+	port = COM3
 	baud rate = 1500000
 	packet type = Binary
 	sample rate hz = 10000
@@ -36,11 +36,11 @@ GUI Settings:
 	transmit saved count = 0
 	sync word = 0xAA
 	sync word byte count = 1
-	datasets count = 11
+	datasets count = 6
 
 		dataset location = 1
 		binary processor = int16 LSB First
-		name = s
+		name = Ax
 		color = 0xFF0000
 		unit = 
 		conversion factor a = 1.0
@@ -48,80 +48,40 @@ GUI Settings:
 
 		dataset location = 3
 		binary processor = int16 LSB First
-		name = t
-		color = 0x0000FF
+		name = Ay
+		color = 0xFF00FF
 		unit = 
 		conversion factor a = 1.0
 		conversion factor b = 1.0
 
 		dataset location = 5
 		binary processor = int16 LSB First
-		name = v
-		color = 0x00FF00
+		name = Az
+		color = 0x0000FF
 		unit = 
 		conversion factor a = 1.0
 		conversion factor b = 1.0
 
 		dataset location = 7
 		binary processor = int16 LSB First
-		name = w
-		color = 0xFF00FF
+		name = Gx
+		color = 0x00FFFF
 		unit = 
 		conversion factor a = 1.0
 		conversion factor b = 1.0
 
 		dataset location = 9
 		binary processor = int16 LSB First
-		name = e
-		color = 0x00FFFF
+		name = Gy
+		color = 0x00FF00
 		unit = 
 		conversion factor a = 1.0
 		conversion factor b = 1.0
 
 		dataset location = 11
 		binary processor = int16 LSB First
-		name = r
+		name = Gz
 		color = 0xFFFF00
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 13
-		binary processor = int16 LSB First
-		name = a
-		color = 0xBF0080
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 15
-		binary processor = int16 LSB First
-		name = b
-		color = 0xBF4000
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 17
-		binary processor = int16 LSB First
-		name = c
-		color = 0x40BF00
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 19
-		binary processor = int16 LSB First
-		name = d
-		color = 0x00BF80
-		unit = 
-		conversion factor a = 1.0
-		conversion factor b = 1.0
-
-		dataset location = 21
-		binary processor = int16 LSB First
-		name = e
-		color = 0x0040BF
 		unit = 
 		conversion factor a = 1.0
 		conversion factor b = 1.0
@@ -134,9 +94,9 @@ GUI Settings:
 	chart type = Time Domain
 	top left x = 0
 	top left y = 0
-	bottom right x = 4
+	bottom right x = 5
 	bottom right y = 5
-	datasets = connection 0 location 1,connection 0 location 3,connection 0 location 5,connection 0 location 7,connection 0 location 9,connection 0 location 11,connection 0 location 13,connection 0 location 15,connection 0 location 17,connection 0 location 19,connection 0 location 21
+	datasets = connection 0 location 5,connection 0 location 3,connection 0 location 1,connection 0 location 7,connection 0 location 9,connection 0 location 11
 	bitfield edge states = 
 	bitfield level states = 
 	duration = 10.0

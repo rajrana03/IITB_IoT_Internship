@@ -156,9 +156,9 @@ void loop() {
 
     Serial.write(SYNC_BYTE);  // Send the start/sync byte
 
-    Serial.write((uint8_t*)&(Ax), sizeof(Ax));
-    Serial.write((uint8_t*)&(Ay), sizeof(Ay));
-    Serial.write((uint8_t*)&(Az), sizeof(Az));
+    // Serial.write((uint8_t*)&(Ax), sizeof(Ax));
+    // Serial.write((uint8_t*)&(Ay), sizeof(Ay));
+    // Serial.write((uint8_t*)&(Az), sizeof(Az));
 
     Serial.write((uint8_t*)&(Gx), sizeof(Gx));
     Serial.write((uint8_t*)&(Gy), sizeof(Gy));
