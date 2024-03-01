@@ -74,30 +74,30 @@ void loop() {
     lastMicros_1 = micros();
 
     raw0 = adc->adc0->analogRead(A0);  //magnetic
-    raw1 = adc->adc0->analogRead(A1);  //vt1
-    raw2 = adc->adc0->analogRead(A2);  //vt2
-    raw3 = adc->adc0->analogRead(A3);  //vt3
-    raw4 = adc->adc0->analogRead(A4);  //ct1
-    raw5 = adc->adc0->analogRead(A5);  //ct2
-    raw6 = adc->adc0->analogRead(A6);  //ct3
-    raw7 = adc->adc0->analogRead(A7);  //ct4
-    raw8 = adc->adc0->analogRead(A8);  //pressure
-    raw9 = adc->adc0->analogRead(A9);  //Waterflow
-    raw17 = adc->adc0->analogRead(A17);  //rpm
+    // raw1 = adc->adc0->analogRead(A1);  //vt1
+    // raw2 = adc->adc0->analogRead(A2);  //vt2
+    // raw3 = adc->adc0->analogRead(A3);  //vt3
+    // raw4 = adc->adc0->analogRead(A4);  //ct1
+    // raw5 = adc->adc0->analogRead(A5);  //ct2
+    // raw6 = adc->adc0->analogRead(A6);  //ct3
+    // raw7 = adc->adc0->analogRead(A7);  //ct4
+    // raw8 = adc->adc0->analogRead(A8);  //pressure
+    // raw9 = adc->adc0->analogRead(A9);  //Waterflow
+    // raw17 = adc->adc0->analogRead(A17);  //rpm
 
 
     Serial.write(SYNC_BYTE);
     Serial.write((uint8_t *)&(raw0), sizeof(raw0));   //magnetic
-    Serial.write((uint8_t *)&(raw1), sizeof(raw1));   //vt1
-    Serial.write((uint8_t *)&(raw2), sizeof(raw2));   //vt2
-    Serial.write((uint8_t *)&(raw3), sizeof(raw3));   //vt3
-    Serial.write((uint8_t *)&(raw4), sizeof(raw4));   //ct1
-    Serial.write((uint8_t *)&(raw5), sizeof(raw5));   //ct2
-    Serial.write((uint8_t *)&(raw6), sizeof(raw6));   //ct3
-    Serial.write((uint8_t *)&(raw7), sizeof(raw7));   //ct4
-    Serial.write((uint8_t *)&(raw8), sizeof(raw8));   //pressure
-    Serial.write((uint8_t *)&(raw9), sizeof(raw9));   //waterflow
-    Serial.write((uint8_t *)&(raw17), sizeof(raw17));   //rpm
+    // Serial.write((uint8_t *)&(raw1), sizeof(raw1));   //vt1
+    // Serial.write((uint8_t *)&(raw2), sizeof(raw2));   //vt2
+    // Serial.write((uint8_t *)&(raw3), sizeof(raw3));   //vt3
+    // Serial.write((uint8_t *)&(raw4), sizeof(raw4));   //ct1
+    // Serial.write((uint8_t *)&(raw5), sizeof(raw5));   //ct2
+    // Serial.write((uint8_t *)&(raw6), sizeof(raw6));   //ct3
+    // Serial.write((uint8_t *)&(raw7), sizeof(raw7));   //ct4
+    // Serial.write((uint8_t *)&(raw8), sizeof(raw8));   //pressure
+    // Serial.write((uint8_t *)&(raw9), sizeof(raw9));   //waterflow
+    // Serial.write((uint8_t *)&(raw17), sizeof(raw17));   //rpm
   }
 
 

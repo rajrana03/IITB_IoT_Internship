@@ -2,6 +2,7 @@
 #include <ADC_util.h>
 
 const int8_t SYNC_BYTE = 0xAA;
+const int8_t SYNC_BYTE_2 = 0xAB;
 uint16_t raw0, raw1, raw2, raw3, raw4, raw5, raw6, raw7, raw8, raw9, raw17, diff;
 unsigned long lastMicros_1, lastMicros_2, timer1, timer2;
 
@@ -87,6 +88,8 @@ void loop() {
 
 
     Serial.write(SYNC_BYTE);
+    Serial.write(SYNC_BYTE_2);
+    Serial.write((uint8_t *)&(lastMicros_1), sizeof(lastMicros_1));   //Timestamp
     Serial.write((uint8_t *)&(raw0), sizeof(raw0));   //magnetic
     Serial.write((uint8_t *)&(raw1), sizeof(raw1));   //vt1
     Serial.write((uint8_t *)&(raw2), sizeof(raw2));   //vt2
@@ -98,7 +101,6 @@ void loop() {
     Serial.write((uint8_t *)&(raw8), sizeof(raw8));   //pressure
     Serial.write((uint8_t *)&(raw9), sizeof(raw9));   //waterflow
     Serial.write((uint8_t *)&(raw17), sizeof(raw17));   //rpm
-    Serial.write((uint8_t *)&(lastMicros_1), sizeof(lastMicros_1));   //Timestamp
     // Serial.println(lastMicros_1);
   }
 

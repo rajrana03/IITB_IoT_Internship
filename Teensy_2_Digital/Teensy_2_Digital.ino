@@ -11,6 +11,7 @@
 String control_val = "";
 
 const int8_t SYNC_BYTE = 0xAA;
+const int8_t SYNC_BYTE_2 = 0xAB;
 // int16_t Ax{ 0 };
 // int16_t Ay{ 0 };
 // int16_t Az{ 0 };
@@ -82,7 +83,7 @@ void setup() {
   Serial.begin(1500000);
   Serial2.begin(115200);
 
-  SerialUSB1.begin(115200);
+  // SerialUSB1.begin(115200);
 
   //  delay(4000);
   SPI1.setMOSI(26);
@@ -187,16 +188,18 @@ void loop() {
       Gx = gyr.x * 100;
       Gy = gyr.y * 100;
       Gz = gyr.z * 100;
+      Serial.write(0xAA);  // Send the start/sync byte
+      Serial.write(SYNC_BYTE_2);
+      Serial.write((uint8_t *)&(lastMicros_1), sizeof(lastMicros_1));  //Timestamp
       if (!Send_Garabage_Flag) {
-        Serial.write(0xAA);  // Send the start/sync byte
-        Serial.write((uint8_t*)&(ax), sizeof(ax));
-        Serial.write((uint8_t*)&(ay), sizeof(ay));
-        Serial.write((uint8_t*)&(az), sizeof(az));
+
+        Serial.write((uint8_t *)&(ax), sizeof(ax));
+        Serial.write((uint8_t *)&(ay), sizeof(ay));
+        Serial.write((uint8_t *)&(az), sizeof(az));
       } else {
-        Serial.write(0xAA);  // Send the start/sync byte
-        Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-        Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
-        Serial.write((uint8_t*)&(Garbage_value), sizeof(Garbage_value));
+        Serial.write((uint8_t *)&(Garbage_value), sizeof(Garbage_value));
+        Serial.write((uint8_t *)&(Garbage_value), sizeof(Garbage_value));
+        Serial.write((uint8_t *)&(Garbage_value), sizeof(Garbage_value));
         uint8_t c = IIS3DWB.getChipID();
         if (c == 0x7B) {
           IIS3DWB_SETUP();
@@ -204,32 +207,33 @@ void loop() {
           // break;
         }
       }
-      Serial.write((uint8_t*)&(Gx), sizeof(Gx));
-      Serial.write((uint8_t*)&(Gy), sizeof(Gy));
-      Serial.write((uint8_t*)&(Gz), sizeof(Gz));
+      Serial.write((uint8_t *)&(Gx), sizeof(Gx));
+      Serial.write((uint8_t *)&(Gy), sizeof(Gy));
+      Serial.write((uint8_t *)&(Gz), sizeof(Gz));
     }
 
-    SerialUSB1.write(0XBB);
-    if (SerialUSB1.available() > 0) {
-      byte rxVal = SerialUSB1.read();
-      // rxVal.trim();
-      // SerialUSB1.println(rxVal);
-      delay(3000);
-      if (rxVal == 0xAB) {  // 0xAA
-        Serial2.write(0XAA);
-        // delay(10000);
-        while (Serial2.available() > 0) {
-          byte rxVal = Serial2.read();
-          // rxVal.trim();
-          // SerialUSB1.println(rxVal);
-          delay(100);
-          if (rxVal == 0xBB) {  // 0xAA
-            SerialUSB1.write(0XCC);
-            delay(10000);
-            break;
-          }
-        }
-      }
-    }
+    // SerialUSB1.write(0XAA);
+    // SerialUSB1.write(0XBB);
+    // if (SerialUSB1.available() > 0) {
+    //   byte rxVal = SerialUSB1.read();
+    //   // rxVal.trim();
+    //   // SerialUSB1.println(rxVal);
+    //   delay(3000);
+    //   if (rxVal == 0xAB) {  // 0xAA
+    //     Serial2.write(0XAA);
+    //     // delay(10000);
+    //     while (Serial2.available() > 0) {
+    //       byte rxVal = Serial2.read();
+    //       // rxVal.trim();
+    //       // SerialUSB1.println(rxVal);
+    //       delay(100);
+    //       if (rxVal == 0xBB) {  // 0xAA
+    //         SerialUSB1.write(0XCC);
+    //         delay(10000);
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
   }
 }

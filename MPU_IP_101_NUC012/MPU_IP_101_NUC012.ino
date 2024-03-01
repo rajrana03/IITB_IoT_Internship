@@ -1,6 +1,19 @@
 #include "esp_task_wdt.h"
 #include <MPU9250_WE.h>
 #include <SPI.h>
+#include <WiFi.h>
+#include <WiFiUdp.h>
+
+/* WiFi network name and password */
+// Your wirelless router ssid and password
+const char * ssid = "NCAIR_IITB";
+const char * pwd = "Asim@123Tewari";
+
+const char * udpAddress = "192.168.0.101"; // NUC012
+const int udpPort = 8080; //port server
+
+//create UDP instance
+WiFiUDP udp;
 
 /////////////MPU Setup/////////////
 //VSPI
@@ -19,8 +32,8 @@ int16_t Gz{ 0 };
 MPU9250_WE myMPU9250 = MPU9250_WE(&SPI, MPU_CS_PIN, true);  //VSPI
 
 void setup() {
-  Serial.begin(1500000);
-  //  Serial.begin(115200);
+//  Serial.begin(1500000);
+    Serial.begin(115200);
   esp_task_wdt_delete(NULL);
 
   myMPU9250.init();
@@ -28,18 +41,32 @@ void setup() {
   myMPU9250.autoOffsets();
   myMPU9250.disableGyrDLPF(MPU9250_BW_WO_DLPF_8800);  // bandwdith without DLPF
   // myMPU9250.setGyrRange(MPU9250_GYRO_RANGE_500);
-  myMPU9250.setGyrRange(MPU9250_GYRO_RANGE_1000);
-  myMPU9250.setAccRange(MPU9250_ACC_RANGE_16G);
+  myMPU9250.setGyrRange(MPU9250_GYRO_RANGE_250);
+  myMPU9250.setAccRange(MPU9250_ACC_RANGE_4G);
   myMPU9250.enableAccDLPF(false);
   myMPU9250.setAccDLPF(MPU9250_DLPF_6);
   myMPU9250.setMagOpMode(AK8963_CONT_MODE_100HZ);
   delay(1000);
+
+   //Connect to the WiFi network
+  WiFi.begin(ssid, pwd);
+  Serial.println("");
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  //This initializes udp and transfer buffer
+  udp.begin(udpPort);
 
 }
 
 void loop() {
   xyzFloat accValue = myMPU9250.getAccRawValues();
   xyzFloat gyr = myMPU9250.getGyrRawValues();
+  udp.beginPacket(udpAddress, udpPort);
   for (;;) {
     esp_task_wdt_init(10, false);
 
@@ -54,15 +81,15 @@ void loop() {
     Gz = gyr.z;
 
 
-    Serial.write(SYNC_BYTE);  // Send the start/sync byte
+    udp.write(SYNC_BYTE);  // Send the start/sync byte
 
-    Serial.write((uint8_t*)&(Ax), sizeof(Ax));
-    Serial.write((uint8_t*)&(Ay), sizeof(Ay));
-    Serial.write((uint8_t*)&(Az), sizeof(Az));
+    udp.write((uint8_t*)&(Ax), sizeof(Ax));
+    udp.write((uint8_t*)&(Ay), sizeof(Ay));
+    udp.write((uint8_t*)&(Az), sizeof(Az));
 
-    Serial.write((uint8_t*)&(Gx), sizeof(Gx));
-    Serial.write((uint8_t*)&(Gy), sizeof(Gy));
-    Serial.write((uint8_t*)&(Gz), sizeof(Gz));
+    udp.write((uint8_t*)&(Gx), sizeof(Gx));
+    udp.write((uint8_t*)&(Gy), sizeof(Gy));
+    udp.write((uint8_t*)&(Gz), sizeof(Gz));
 
   }
 }
